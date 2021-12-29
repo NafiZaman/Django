@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+    <h2>Here are your notifications</h2>
+    {% for notif in notifications %}
+        {% if notif.received_request %}
+            <form action="{% url 'friend:accept_friend_request'%}" method="post">
+                {% csrf_token %}
+                {{notif.sender}} has sent you a friend request.
+                <button type="submit" name="sender" value={{notif.sender_profile_id}}>Accept</button>
+            </form>
+        {% elif notif.accepted_request%}
+            <a href="{% url 'profile:view_profile' notif.receiver|slugify notif.profile_id %}">{{notif.receiver}}</a> has accepted your friend request
+        {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+
+{% block content %} 
+
+    {% if orders %}
+        <h1 class="text-center mb-5">Below is a list of all of your orders.</h1>
+        {% for order in orders.values %}
+            <div class="my-3 container">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex justify-content-between">
+                            <h5>Order# {{order.order_id}}</h5>
+                            <h5>Ordered on: {{order.date_confirmed}}</h5>
+                            <h5>Order status: {{order.status}}</h5>
+                            <h5>Total cost: &#2547;{{order.total_cost}}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-light text-center">
+                            <thead class="table-success">
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Date Added</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.order_items %}
+                                    <tr>
+                                        <td>
+                                            <div style="text-align:center;">
+                                                <img src="{{item.image}}" alt="" style="width:5vw; height:5vh;">
+                                            </div>
+                                        </td>
+                                        <td>{{item.name}}</td>
+                                        <td>{{item.quantity}}</td>
+                                        <td>{{item.total_price}}</td>
+                                        <td>{{item.date_added}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1 class="text-center">You havent ordered anything.</h1>
+    {% endif %}
+
+{% endblock %}

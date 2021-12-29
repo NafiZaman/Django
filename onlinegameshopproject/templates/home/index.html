@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section>
+        <div class="container">
+            {% if name %}
+                <h1>Welcome, {{name}}</h1>
+            {% else %}
+                <h1>Hello there!</h1>
+            {% endif %}
+        </div>
+    </section>
+
+    <section>
+        <div class="d-flex justify-content-center p-5">
+            <form>
+                <input class="form-control" type="text" placeholder="Search for games" aria-label="Search" style="width: 600px;">
+            </form>
+            <button type="button" class="btn btn-dark"><i class="bi bi-search"></i></button>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row row-cols-lg-4">
+                {% for p in products %}
+                    <div class="col mb-3">
+                        <div class="card" style="width: 17rem;">
+                            <img src="{{p.box_art}}" style="width:100%; height:15vw; object-fit:cover;" alt="{{p.name}}">
+                            <div class="card-body">
+                                <h6 class="card-title text-truncate">{{p.name}}</h6>
+                                <form action="{% url 'products:view_product' p.id %}" method="get">
+                                    <button type="submit" class="btn btn-warning">View Game</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

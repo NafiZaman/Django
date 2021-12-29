@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if is_server_error %}
+        <p style="color:red;"><strong>Server Error</strong></p>
+    {% endif %}
+
+
+    <h1>{{shop_name}}'s Profile</h1>
+
+    {% block shop_content %}
+    {% endblock %}
+{% endblock %}

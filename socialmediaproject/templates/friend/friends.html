@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+    {% comment %} <h1>Displaying all of your fiends</h1> {% endcomment %}
+
+    <section class="p-2">
+        <div class="card">
+            <h4 class="mt-2 text-center text-decoration-underline">Your Friends</h4>
+            <div class="card-body">
+                {% for friend in friends %}
+                    <div class="card shadow-sm mb-2 border-primary">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="align-self-center">
+                                    <img class="rounded-circle" src="{{friend.profile_pic}}" alt="user_pic" width="20" height="20" style="object-fit:cover;"/>
+                                </div>
+                                <div class="align-self-center">
+                                  <form action="{% url 'profile:view_profile' friend.name|slugify friend.profile_id %}" method="get">
+                                    <button type="submit" class="px-2 py-0 btn btn-link shadow-none" style="text-decoration:none;">{{friend.name}}</button>
+                                  </form>
+                                </div>
+                                <div class="ms-auto dropstart">
+                                    <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id={{friend.id}} data-type="friend" data-name="{{friend.name}}">Unfriend {{friend.name}}</a></li>
+                                        <li><a class="dropdown-item" href="#">Message {{friend.name}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if frnd_reqs|length >= 1%}
+                    <h4 class="mt-2 text-center text-decoration-underline">Friend requests</h4>
+                    {% for fr in frnd_reqs %}
+                        <div class="card shadow-sm mb-2 border-primary">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="align-self-center">
+                                        <img class="rounded-circle" src="{{fr.sender_pic}}" alt="user_pic" width="20" height="20" style="object-fit:cover;"/>
+                                    </div>
+                                    <div class="align-self-center">
+                                    <form action="{% url 'profile:view_profile' fr.sender|slugify fr.sender_profile_id %}" method="get">
+                                        <button type="submit" class="px-2 py-0 btn btn-link shadow-none" style="text-decoration:none;">{{fr.sender}}</button>
+                                    </form>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <form action="{% url 'friend:accept_friend_request'%}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm" name='req_id' value="{{fr.id}}">Accept</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

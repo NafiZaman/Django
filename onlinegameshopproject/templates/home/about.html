@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static%}
+
+{% block content %}
+    <div class="container-fluid text-center">
+        <h1 class="p-5 text-dark">Welcome to Games Intel</h1>
+    </div>
+
+    <section id="learn" class="p-5">
+        <div class="container text-dark">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md">
+                    <img src="{% static '/images/booking.svg' %}" class="img-fluid" alt="">
+                </div>
+                <div class="col-md p-5">
+                    <h2>Book games online</h2>
+                    <p class="lead">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error quasi repudiandae itaque voluptatum, facere aliquam.
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas accusamus iure fuga ullam, ipsam nemo illo excepturi odio aspernatur doloribus recusandae saepe, vitae, neque aperiam tempora commodi quaerat quisquam reprehenderit?
+                    </p>
+                    <a href="#" class="btn btn-light mt-3">
+                        <i class="bi bi-chevron-right"></i> Read More
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="container text-dark">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md p-5">
+                    <h2>Register your shop and sell games online</h2>
+                    <p class="lead">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error quasi repudiandae itaque voluptatum, facere aliquam.
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas accusamus iure fuga ullam, ipsam nemo illo excepturi odio aspernatur doloribus recusandae saepe, vitae, neque aperiam tempora commodi quaerat quisquam reprehenderit?
+                    </p>
+                    <a href="#" class="btn btn-light mt-3">
+                        <i class="bi bi-chevron-right"></i> Read More
+                    </a>
+                </div>
+                <div class="col-md">
+                    <img src="{% static '/images/seller.svg' %}" class="img-fluid" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

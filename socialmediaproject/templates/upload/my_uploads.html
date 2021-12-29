@@ -1,0 +1,76 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="pt-2">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for upload in uploads %}
+                    <div class="col">
+                        <div class="card shadow border-primary">
+                            <img src="{{upload.image_path}}" class="card-img-top" alt="upload" style="object-fit:cover; width:auto; height:165px;">
+                            <div class="p-1 card-body">
+                                {% if upload.is_profile_pic %}
+                                    <p class="mb-0 p-2">Current profile picture <i class="bi bi-check-circle-fill" style="color:green;"></i></p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">{{upload.date_added}}</small>
+                                    <div class="ms-auto p-2 dropstart">
+                                        <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id={{upload.id}} data-type="upload">Remove</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="setProfilePic({{upload.id}})">Set as profile picture</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+<!--
+    <h2>Your uploads</h2>
+    <hr>
+    {% for upload in uploads %}
+        {% comment %} <div id="img-{{upload.id}}">
+            <img class="mb-2 img-fluid" src="{{upload.image_path}}" alt="" style="object-fit: cover; width: 165px; height: 165px;">
+            {% if upload.is_profile_pic %}
+                Profile picture <i class="bi bi-check-circle-fill"></i>
+            {% endif %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" name="remove" value="{{upload.id}}">Remove</button>
+            </form>
+        </div> {% endcomment %}
+        <div id="upl-{{upload.id}}" class="card text-white border-0" style="width:165px; width:165px;">
+            <img src="{{upload.image_path}}" class="card-img" alt="" style="object-fit: cover; width: 165px; height: 165px;">
+            <div class="card-img-overlay p-0">
+                <div class="position-relative">
+                    <div class="position-absolute top-0 end-0">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <li><button type="submit" class="dropdown-item btn btn-link" name="remove" value="{{upload.id}}">Remove</button></li>
+                                <li><button type="submit" class="dropdown-item btn btn-link" name="set_as" value="{{upload.id}}">Set as profile picture</button></li>
+                            </form>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% if upload.is_profile_pic %}
+                <div class="card-footer text-dark">
+                    Profile picture <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}-->
+

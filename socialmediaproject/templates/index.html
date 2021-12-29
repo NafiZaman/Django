@@ -1,0 +1,363 @@
+{% load static %}
+{% load crispy_forms_tags%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.svg'%}"/>
+    <title>Facejournal</title>
+  </head>
+
+  <body>
+
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="mb-0 alert alert-danger alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% else %}
+            <div class="mb-0 alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+              {{message}}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    {% endfor %}
+    
+    <div class="container-fluid">
+      <div class="row flex-nowrap justify-content-md-between">
+        <div class="px-0 col-auto col-lg-2 col-md-3 col-sm-2 col-2 bg-dark text-light">
+          <!-- *Side bar -->
+          <div class="p-3 d-flex flex-column align-items-md-start align-items-sm-center align-items-center min-vh-100 sticky-top">
+            <!-- website icon and name go in here -->
+            <div class="d-flex flex-row justify-content-center">
+                <div class="align-self-center">
+                    <a class="d-flex flex-row" href="{% url 'users:home' %}" style="text-decoration:none;">
+                        <i class="fs-1 bi-facebook" style="color:white;"></i>
+                        <p class="mt-auto mb-0 fs-3 d-none d-sm-none d-md-block align-self-center text-light"><strong>acejournal</strong></p>
+                    </a>
+                </div>
+            </div>
+            <hr />
+            <!-- Vertical navbar starts from here -->
+            <ul class="nav nav-pills flex-column align-items-md-start align-items-center mb-sm-auto mb-0">
+              <li>
+                <a href="{% url 'users:home'%}" class="nav-link px-0 align-middle text-white">
+                  <i class="fs-4 bi-house-fill"></i>
+                  <span class="ms-1 d-none d-md-inline">Home</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'profile:my_profile'%}" class="nav-link px-0 align-middle text-white">
+                  <i class="fs-4 bi-speedometer"></i>
+                  <span class="ms-1 d-none d-md-inline">Profile</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'uploads:my_uploads'%}" class="nav-link px-0 align-middle text-white">
+                  <i class="fs-4 bi-cloud-upload-fill"></i>
+                  <span class="ms-1 d-none d-md-inline">Uploads</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'friend:friends'%}" class="nav-link px-0 align-middle text-white">
+                  {% if user.is_authenticated and pending_requests %}
+                    <i class="fs-4 bi-person-check-fill" style="color:green;"></i>
+                  {% else %}
+                    <i class="fs-4 bi-person-check-fill"></i>
+                  {% endif %}
+                  <span class="ms-1 d-none d-md-inline">Friends</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link px-0 align-middle text-white">
+                  <i class="fs-4 bi-envelope-open"></i>
+                  <span class="ms-1 d-none d-md-inline">Messages</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'users:search'%}" class="nav-link px-0 align-middle text-white d-lg-none">
+                  <i class="fs-4 bi-search"></i>
+                  <span class="ms-1 d-none d-md-inline">Search</span>
+                </a>
+              </li>
+            </ul>
+            <hr />
+            <div class="dropdown pb-4">
+              <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="rounded-circle" src="{{pic}}" alt="profile_pic" width="30" height="30" style="object-fit:cover;"/>
+                <span class="d-none d-sm-inline mx-1">{{fname}}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#">About</a></li>
+                <li><hr class="dropdown-divider" /></li>
+
+                {% if user.is_authenticated %}
+                  <li><a class="dropdown-item" href="{% url 'users:user_settings'%}">Settings</a></li>
+                  <li><a class="dropdown-item" href="{% url 'users:user_logout'%}">Log out</a></li>
+                {% else %}
+                  <li><a class="dropdown-item" href="{% url 'users:register'%}">Register</a></li>
+                  <li><a class="dropdown-item" href="{% url 'users:user_login'%}">Login</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-lg-5 pe-md-0 col-lg-7 col-md-9 col-sm-10 col-10">
+        <!--Posts-->
+        {% block content %}
+          <div class="container rounded">
+            <div class="row">
+              <!--New post starts from here-->
+              {% block new_post %}
+                <div class="col-12">
+                  <div class="card shadow my-4 border-primary">
+                    <div class="card-body">
+                      <div class="d-flex d-row align-items-center">
+                        <div class="m-0 align-self-start">
+                          <img class="rounded-circle" src="{{pic}}" alt="profile_pic" width="40" height="40" style="object-fit:cover;">
+                        </div>
+                        <form action="{% url 'post:make_post'%}" method='post' style="width:100%;">
+                          {% csrf_token %}
+                          {{post_form|crispy}}
+                          <div class="mt-2 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-sm">Post</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endblock  %}
+              <!--New post ends here-->
+
+              <!--User posts start from here-->
+              {% for post in posts %}
+                <div id="post-{{post.id}}" class="col-12">
+                  <div class="card shadow mb-4 border-primary">
+                      <!--Card header starts from here-->
+                      <div class="card-header">
+                        <div class="container p-0">
+                          <div class="row justify-content-between">
+                            <div class="col">
+                              <div class="d-flex align-items-center">
+                                <div class="align-self-center">
+                                  <img src="{{post.op_pic}}" alt="user_pic" width="50" height="50" class="rounded-circle" style="object-fit:cover;"/>
+                                </div>
+                                <div class="align-self-center ps-2">
+                                  <form action="{% url 'profile:view_profile' post.op|slugify post.profile_id %}" method="get">
+                                    <button type="submit" class="p-0 btn btn-link shadow-none" style="text-decoration:none;">{{post.op}}</button>
+                                  </form>
+                                  <p class="text-muted mb-0 d-none d-md-block">
+                                    <small>{{post.date_added}}</small>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            {% if post.mutable %}
+                              <div class="col-auto align-self-center">
+                                <button type="button" class="p-0 btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{post.id}}" data-type="post">Edit</button>
+                                <button type="button" class="p-0 btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id={{post.id}} data-type="post">Remove</button>
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                      <!--Card header ends here-->
+
+                      <!--Card body starts here-->
+                      <div class="card-body p-0">
+                        <!--Post text-->
+                        <p id="text-{{post.id}}-post" class="p-2 fs-5" style="white-space:pre-line;">{{post.text}}</p>
+
+                        <p class="m-0 ps-2 lead fs-6"><small id="post-like-comment-count-{{post.id}}">{{post.like_count}} Likes, {{post.comment_count}} Comments</small></p>
+
+                        <!--Buttons start from here-->
+                        <div class="container-fluid p-0">
+                          <div class="row m-0 justify-content-between border-top border-primary">
+                            <div class="col-4 p-0 border-end border-primary">
+                              <button id="post-like-btn-{{post.id}}" type="button" class="btn btn-light btn-sm rounded-0 text-primary" style="width: 100%" onclick="addLikeToPost({{post.id}})">
+                                {% if post.is_liked %}
+                                  <i class="fs-5 bi-hand-thumbs-up-fill"></i>
+                                  <span class="d-none d-md-inline"> Liked!</span>
+                                {% else %}
+                                  <i class="fs-5 bi-hand-thumbs-up"></i>
+                                  <span class="d-none d-md-inline"> Like</span>
+                                {% endif %}
+                              </button>
+                            </div>
+                            <div class="col-4 p-0 border-end border-primary">
+                              <button type="button" class="btn btn-light btn-sm rounded-0 text-primary" style="width: 100%" onclick="addCommentToPost({{post.id}})">
+                                <i class="fs-5 bi-chat"></i>
+                                <span class="d-none d-md-inline"> Comment</span>
+                              </button>
+                            </div>
+                            <div class="col-4 p-0">
+                              <button type="button" class="btn btn-light btn-sm rounded-0 text-primary" style="width: 100%">
+                                <i class="fs-5 bi-arrow-90deg-right"></i>
+                                <span class="d-none d-md-inline"> Share</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <!--Buttons end here-->
+                      </div>
+
+                      <!--Card body ends here-->
+                    
+                    <!--Card footer starts from here-->
+                    <div class="card-footer">
+                        <div class="d-flex d-row align-items-center mb-4">
+                          {% if user.is_authenticated %}
+                              <img src="{{pic}}" alt="profile_pic" width="30" height="30" class="rounded-circle" style="object-fit:cover;"/>
+                          {% endif %}
+                          <input id="text-{{post.id}}-post-comment" type="text" class="form-control ms-2" placeholder="Post a comment...."/>
+                        </div>
+
+                      <!--Comment section starts here-->
+                      {% for comment in post.comments %}
+                        <div id="comment-{{comment.id}}" class="d-flex d-row align-items-start mb-4">
+                          <div class="ms-2 p-2 pb-0 shadow rounded border border-primary">
+                            <div class="d-flex flex-row mb-1">
+                                <div class="align-self-center d-none d-md-block">
+                                  <img src="{{comment.commenter_pic}}" alt="profile_pic" width="20" height="20" class="rounded-circle" style="object-fit:cover;"/>
+                                </div>
+                                  <div class="align-self-center ps-2">
+                                    <form action="{% url 'profile:view_profile' comment.commenter|slugify comment.profile_id %}" method="get">
+                                      <button type="submit" class="p-0 btn btn-link shadow-none text-truncate" style="text-decoration:none;">{{comment.commenter}}</button>
+                                    </form>
+                                    <small class="text-muted d-md-none">{{comment.date_added}}</small>
+                                  </div>
+                                  <div class="align-self-center ps-2 d-none d-md-block">
+                                    <small class="text-muted">{{comment.date_added}}</small>
+                                  </div>
+                              {% if comment.mutable %}
+                                <div class="ms-auto bd-highlight dropdown">
+                                  <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                  <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{comment.id}}" data-type="comment">Edit</a></li>
+                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id={{comment.id}} data-type="comment">Remove</a></li>
+                                  </ul>
+                                </div>
+                              {% endif %}
+                            </div>
+                            <hr class="mt-0 mb-2" />
+                            <!--Comment text-->
+                            <p id="text-{{comment.id}}-comment" class="lh-1 m-0 fs-6" style="white-space:pre-line;"><small>{{comment.text}}</small></p>
+                            <hr class="mt-0 mb-2" />
+                            <button id="like-comment-btn-{{comment.id}}" type="button" class="btn btn-link b-0 p-0 text-decoration-none shadow-none" style="color: green" onclick="likePostComment({{comment.id}})">
+                              {% if comment.is_liked %}
+                                <i class="bi bi-emoji-smile-fill"></i> <span class="text-muted">{{comment.like_count}}</span>
+                              {% else %}
+                                <i class="bi bi-emoji-smile"></i> <span class="text-muted">{{comment.like_count}}</span>
+                              {% endif %}
+                            </button>
+                          </div>
+                        </div>
+                      {% endfor %}
+                      <!--Comment section ends here-->
+                    </div>
+                    <!--Card footer ends here-->
+                  </div>
+                </div>
+              {% endfor %}
+              <!--User posts end here-->
+            </div>
+          </div>
+        {% endblock %}
+    
+         <!--modals-->
+          {% if user.is_authenticated %}
+            <section>
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                          <label for="post-textarea" class="col-form-label">Enter new text here:</label>
+                          <textarea class="form-control" id="post-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button id="confirm-btn" type="button" class="btn btn-info" data-bs-dismiss="modal" onclick="editPost()">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Remove?</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p></p>
+                      <button id='delete-btn' type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close" onclick="removeContent()">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          {% endif %}
+
+        </div>
+
+        <!-- *People -->
+        <div class="px-0 col-lg-3 d-none d-md-none d-lg-block">
+          <div class="d-flex flex-column align-items-md-start align-items-sm-center align-items-center min-vh-100 sticky-top">
+            <div class="card" style="width:100%;">
+            <div class="card-body">
+              <div class="input-group">
+                <form action="{% url 'users:search'%}" method="get" style="width:100%;">
+                  <input type="text" class="form-control" placeholder="Search for people..." name="query">
+                </form>
+              </div>
+              <h6 class="mt-4 text-decoration-underline">People you may know</h6>
+              {% for p in people %}
+                <div class="card mt-2 border-primary">
+                  <div class="p-1 card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="align-self-center">
+                        <img class="rounded-circle" src="{{p.profile_pic}}" alt="user_pic" width="20" height="20" style="object-fit:cover;"/>
+                      </div>
+                      <div class="align-self-center">
+                        <form action="{% url 'profile:view_profile' p.name|slugify p.profile_id %}" method="get">
+                          <button type="submit" class="p-0 btn btn-link shadow-none" style="text-decoration:none;"><strong>{{p.name}}</strong></button>
+                        </form>
+                      </div>
+                      <div class="ms-auto">
+                        <form action="{% url 'friend:send_friend_request' %}" method="post">
+                            {% csrf_token %}
+                            <button type="success" class="btn btn-outline-success btn-sm" name="profile_id" value="{{p.profile_id}}">Add <i class="bi bi-person-plus-fill"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/main.js'%}"></script>  
+  </body>
+</html>

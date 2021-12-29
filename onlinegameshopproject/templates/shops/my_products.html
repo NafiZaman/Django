@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1 class="p-3">Products sold by {{shop_name}}</h1>
+    
+    <section>
+        <div class="container">
+            <div class="row row-cols-lg-4">
+                {% for p in products %}
+                    <div class="col mb-3">
+                        <div class="card" style="width: 17rem;">
+                            <img src="{{p.box_art}}" style="width:100%; height:15vw; object-fit:cover;" alt="{{p.name}}">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">{{p.name}}</h5>
+                                <p class="card-text text-truncate">
+                                    <strong>Price (Tk): </strong>{{p.price}}<br>
+                                {% if p.in_stock %}
+                                    <strong>In stock:</strong>
+                                        <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                                {% else %}
+                                    <strong>In stock:</strong>
+                                        <i class="bi bi-x-circle-fill" style="color:red;"></i>
+                                    
+                                {% endif %}
+                                <br><strong>Platforms: </strong>{{p.platforms}}
+                                </p>
+
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal{{p.id}}">View</button>
+
+                                <!-- Modal Start -->
+                                    <div class="modal fade" id="exampleModal{{p.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Update product</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Product: </strong>{{p.name}}</p>
+                                                    <form action="" method="POST">
+                                                        {% csrf_token %}
+                                                        {{p.update_form|crispy}}
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-info" name="update" value={{p.id}}>Update</button>
+                                                            <button type="submit" class="btn btn-danger" name="remove" value={{p.id}}>Remove</button>
+                                                        </div>                                                   
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <!-- Modal End -->
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

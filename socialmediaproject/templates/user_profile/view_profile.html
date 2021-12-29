@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+
+    <h2 class="text-center">Profile of {{profile_user_name}}</h2>
+    <div class="d-flex flex-column">
+        <div class="align-self-center">
+            <img class="my-2 mb-2 img-thumbnail" src="{{profile.profile_pic.image.url}}" alt="profile pic" style="object-fit: cover; width: 165px; height: 165px; box-shadow: 0 0 10px 0 rgba(255,255,255,.35); border-radius: 100px; z-index: 0;">
+        </div>
+        <div id="friend-status" class="align-self-center">
+            {% if friends %}
+                <p><i class="fs-3 bi-person-check-fill"></i> Friends</p>
+            {% elif sent_request %}
+                <p class="fs-4">Friend request sent</p>
+            {% elif received_request%}
+                <p class="fs-4">Received friend request</p>
+            {% elif friends == False %}
+                <form action="{% url 'friend:send_friend_request' %}" method="post">
+                    {% csrf_token %}
+                    <button type="success" class="mb-2 btn btn-success btn-lg" name="profile_id" value="{{profile_id}}">Add as friend <i class="bi bi-person-plus-fill"></i></button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section>
+    {% if info or posts %}
+        <div class="card">
+            <div class="card-body">
+                {% if info %}
+                    <h4 class="text-center text-decoration-underline">Information</h4>
+                    <div class="p-2 border border-primary rounded">
+                        <p class="h5">Bio: <span class="lead">{{info.bio}}</span></p>
+                        <p class="h5">Education: <span class="lead">{{info.education}}</span></p>
+                        <p class="h5">Relationship Status: <span class="lead">{{info.rel_status}}</span></p>
+                        <p class="h5">Works at: <span class="lead">{{info.work}}</span></p>
+                        <p class="h5">Location: <span class="lead">{{info.location}}</span></p>
+                    </div>
+                {% endif %}
+                
+                {% if posts %}
+                    <h4 class="mt-5 text-center text-decoration-underline">Posts by {{profile_user_name}}</h4>
+                    <div class="p-0 container">
+                        <div class="row">
+                            {% block new_post %}
+                            {% endblock %}
+                            {% csrf_token %}
+                            {{block.super}}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    </section>
+
+    {% comment %} <div id="friend-status">
+        {% if friends == False %}
+            {% csrf_token %}
+            <button id="send-req-btn" type="button" onclick="sendFriendRequest({{profile_id}})">Add as friend</button>        
+        {% elif sent_request%}
+            <p>Friend request sent</p>
+        {% elif received_request %}
+            <form action="{% url 'friend:accept_friend_request'%}" method="post">
+                {% csrf_token %}
+                <p>You have received a friend request from this person</p>
+                <button type="submit" name="sender" value={{profile_id}}>Accept</button>
+            </form>
+        {% elif friends %}
+            <p><i class="fs-5 bi-person-check-fill"></i> Friends</p>
+            <p><strong>Bio: </strong>{{profile.bio}}</p>
+            <p><strong>Education: </strong>{{profile.education}}</p>
+            <p><strong>Relationship Status: </strong>{{profile.rel_status}}</p>
+            <p><strong>Work: </strong>{{profile.work}}</p>
+            <p><strong>From: </strong>{{profile.location}}</p>
+        {% endif %}
+    </div> {% endcomment %}
+{% endblock %}

@@ -1,0 +1,161 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static '/css/style.css'%}">
+    <link rel="icon" type="image/png" href="{% static '/images/logo.png'%}"/>
+    <title>Kabi's Kitchen</title>
+</head>
+<body>
+
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="p-3 alert alert-danger" role="alert">
+                {{message}}
+            </div>
+        {% else %}
+            <div class="p-3 alert alert-{{message.tags}}">
+                {{message}}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark " style="background-color:#1c7c54;">
+        <div class="container-fluid">
+            <a id="logo-text" class="navbar-brand" href="{% url 'home:home' %}">
+                <img class= "img-responsive" src="{% static '/images/logo.png' %}" alt="Logo">
+                Kabi's Kitchen
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home:about'%}">About</a>
+                    </li>
+                </ul>
+                <form class="d-flex" action="{% url 'product:search_product'%}" method='get'>
+                    <input class="form-control me-2" type="search" placeholder="Search for products" aria-label="Search" name="search">
+                    <button class="btn btn-outline-secondary bg-light" type="submit">Search</button>
+                </form>
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'order:view_cart'%}"><i class="bi bi-cart-fill"></i><span class='badge badge-warning' id='lblCartCount'>{{cart_count}}</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!---->
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{username}}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'order:my_orders' %}">My Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'user_profile:my_profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:user_logout'%}">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text">
+                            <a class="btn btn-danger"  href="{% url 'users:register' %}" role="button">Sign Up</a>
+                            <a class="btn btn-warning text-dark" href="{% url 'users:user_login' %}" role="button">Login</a>
+                        </span>
+                    </li>
+                </ul>
+            {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+        <section>
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{% static '/images/1.svg'%}" style="width: 100%; height: 80vh;" alt="">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static '/images/2.svg'%}" style="width: 100%; height: 80vh;" alt="">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static '/images/3.svg'%}" style="width: 100%; height: 80vh;" alt="">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="p-5">
+            <h1 class="display-6 mb-5">Featured products</h1>
+            <div class="container">
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    {% if featured_products %}
+                        {% csrf_token %}
+                        {% for p in featured_products %}
+                            <div class="col">
+                                <div class="card bg-light text-dark shadow-lg">
+                                    <img src="{{p.image}}" class="card-img-top" alt="{{p.name}}">
+                                    <div class="card-header">
+                                        <h5 class="card-title text-truncate mb-0">{{p.name}}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="mb-0">&#2547;{{p.price}}.00</h4>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <span>
+                                            <button class="btn btn-success" onclick=addToCart({{p.id}})>Add to cart</button>
+                                            <button class="btn btn-warning" onclick=viewProduct({{p.id}})>View Product</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    {% endblock %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-4 text-white text-center position-relative" style="background-color:#132a13;">
+        <div class="container">
+            <p class="lead mb-0">Copyright &copy; Kabi's Kitchen</p>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="{% static '/js/main.js'%}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+</body>
+</html>

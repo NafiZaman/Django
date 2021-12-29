@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="p-3">Showing bookings of {{shop_name}}</h1>
+
+    <section class="p-5">
+        <div class="table-responsive">
+            <table class="table align-middle table-light table-striped table-bordered text-center">
+                
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Customer</th>
+                        <th>Platform</th>
+                        <th>Price</th>
+                        <th>Booking Date</th>
+                        <th>Product Arrived?</th>
+                        <th>Picked Up<th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{booking.product_name}}</td>
+                            <td>{{booking.customer}}</td>
+                            <td>{{booking.platform}}</td>
+                            <td>{{booking.price}}</td>
+                            <td>{{booking.booking_date}}</td>
+                            <td>
+                                {% if booking.is_arrived %}
+                                    <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill" style="color:red;"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking.is_picked_up %}
+                                    <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill" style="color:red;"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal{{booking.id}}">View</button>
+                            </td>   
+                        </tr>
+                        <!-- Modal Start -->
+                        <div class="modal fade" id="exampleModal{{booking.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Update booking</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Customer: </strong>{{booking.customer}}</p>
+                                        <p><strong>Product: </strong>{{booking.product_name}}</p>
+                                        <p><strong>Platform: </strong>{{booking.platform}}</p>
+
+                                        <form action="" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="product_arrived">
+                                                    Product arrived?
+                                                </label>
+                                                {% if booking.is_arrived %}
+                                                    <input class="form-check-input" type="checkbox" id="product_arrived" name="arrived" checked>
+                                                {% else %}
+                                                    <input class="form-check-input" type="checkbox" id="product_arrived" name="arrived">
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="picked_up">
+                                                    Picked up?
+                                                </label>
+                                                {% if booking.is_picked_up %}
+                                                    <input class="form-check-input" type="checkbox" id="picked_up" name="pickedup" checked>
+                                                {% else %}
+                                                    <input class="form-check-input" type="checkbox" id="picked_up" name="pickedup">
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" name="booking" value={{booking.id}} class="btn btn-info">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal End -->
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+{% endblock %}

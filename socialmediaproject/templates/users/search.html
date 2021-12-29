@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <section class="p-2">
+        <div class="card">
+            <div class="card-body d-md-none">
+                <form action="{% url 'users:search'%}" method="get" style="width:100%;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for people..." name="query">
+                    </div>
+                    <div class="p-2 text-end">
+                        <button type="submit" class="btn btn-warning btn-sm">Search</button>
+                    </div>
+                </form>
+            </div>
+            {% if users|length > 0 %}
+                <h4 class="mt-2 text-center text-decoration-underline">Search results</h4>
+            {% endif %}
+            <div class="card-body">
+                {% for user in users %}
+                    <div class="card shadow-sm mb-2 border-primary">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="align-self-center">
+                                    <img class="rounded-circle" src="{{user.pic}}" alt="user_pic" width="30" height="30" style="object-fit:cover;"/>
+                                </div>
+                                <div class="align-self-center">
+                                  <form action="{% url 'profile:view_profile' user.name|slugify user.profile_id %}" method="get">
+                                    <button type="submit" class="px-2 py-0 btn btn-link shadow-none" style="text-decoration:none;">{{user.name}}</button>
+                                  </form>
+                                </div>
+                                <div class="ms-auto">
+                                    {% if user.friends %}
+                                        <i class="bi bi-person-check-fill"></i>
+                                    {% elif user.sent_request%}
+                                        Request Sent
+                                    {% elif user.received_request%}
+                                        Request Received
+                                    {% else %}
+                                        <form action="{% url 'friend:send_friend_request' %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="success" class="btn btn-outline-success btn-sm" name="profile_id" value="{{user.profile_id}}">Add <i class="bi bi-person-plus-fill"></i></button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% load static%}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <link rel="icon" type="image/png" href="{% static '/images/logo.png'%}"/>
+    <title>Games Intel | Login</title>
+</head>
+<body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{message.tags}}">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex p-5 justify-content-center">
+        <div class="card" style="width:30em;">
+            <div class="card-header">
+                <div class="logo">
+                    <a href="{% url 'products:featured_products' %}" class="logo-link_2">
+                        <img src="{% static '/images/logo.png' %}" alt="Logo" style="width:3vw;">
+                        Games Intel Login
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="lead">Enter your login details.</p>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Enter email">
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div class="card-footer text-muted">
+                        <small>
+                            Dont have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#userType">Register Here</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-4 bg-dark text-white text-center position-relative">
+        <div class="container">
+            <p class="lead">Copyright &copy; 2021 Games Intel</p>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="userType" tabindex="-1" aria-labelledby="userTypeLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userTypeLabel">Sign up as?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-secondary" href="{% url 'users:register' 'shop'%}" role="button">Shop</a>
+                        <a class="btn btn-secondary" href="{% url 'users:register' 'customer'%}" role="button">Customer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+</body>
+</html>
+
+{% comment %} {% block content  %}
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+
+    <h1>Login to your account</h1>
+
+    <form action="{% url 'users:user_login' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" id='email' placeholder='email'><br><br>
+        <input type="password" name="password" id='password' placeholder='password'><br><br>
+        <input type="submit" name='login' value="Login"><br><br>
+        Dont have an account? <a href="{% url 'users:register' %}">Register Here</a>
+    </form>
+{% endblock %} {% endcomment %}

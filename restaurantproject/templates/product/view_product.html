@@ -1,0 +1,123 @@
+{% extends 'index.html' %}
+{% load static%} 
+{% block content %}
+
+  {% if 'product' %}
+    <section class="py-5">
+      {% csrf_token %}
+      <div class="container bg-light">
+        <div class="row align-items-between">
+          <div class="col">
+            <img src="{{product.image}}" class="img-thumbnail" alt="{{product.name}}"/>
+            <h2 class="d-block d-lg-none">{{product.name}}</h2>
+            <h5>
+              Unit Price: <strong class="h2 text-success">&#2547;{{product.price}}.00</strong>
+            </h5>
+            <div class="container p-0">
+              <div class="row">
+                <div class="col-auto">
+                  <h5 class="m-0">Quantity:</h5>
+                  <small class="fw-lighter">({{product.stock_quantity}} in stock)</small>
+                </div>
+                <div class="col">
+                  <input type="number" id="quantity" min="1" value="1" max="{{product.stock_quantity}}" class="form-control"/>
+                </div>
+                <div class="col">
+                  <button class="btn btn-outline-success" type="button" onclick="addToCart({{product.id}})">
+                    <i class="bi bi-bag-fill"></i> Add to cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-lg py-2">
+            <h2 class="d-none d-lg-block">{{product.name}}</h2>
+            <hr />
+            <p><strong>Description: </strong>{{product.description}}</p>
+            <hr />
+            <p><strong>Ingredients: </strong>{{product.ingredients}}</p>
+            <hr />
+            <p><strong>Region: </strong>{{product.region}}</p>
+            <hr />
+          </div>
+        </div>
+        <div class="row justify-content-center justify-content-md-center justify-content-lg-start">
+          <h1>Product Reviews</h1>
+          <div class="col-md-12 col-lg-6">
+            <div class="mb-3">
+              <div class="form-outline mb-5">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <label class="form-label" for="textAreaExample">
+                    {% if user.is_authenticated %} @{{username}} {% else %}
+                    <a href="{% url 'users:user_login'%}">Login</a> to post
+                    reviews {% endif %}
+                  </label>
+                  {{form.as_p}}
+                  <div class="float-end">
+                    <button type="submit" class="btn btn-success btn-sm mt-2">
+                      Post review
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {% if product_reviews %}
+            {% for review in product_reviews %}
+              <div class="row my-3 row-cols-md-1 row-cols-lg-2">
+                <div class="col">
+                  <div class="div card border-success">
+                    <!-- Card header-->
+                    <div class="card-header">
+                      {% if review.is_author %}
+                        <h6 class="mb-0">
+                          @{{review.author}} <span class="badge bg-success">You</span>
+                        </h6>
+                        <h6 class="card-subtitle mt-2 text-muted">
+                          Posted {{review.date_posted}}
+                        </h6>
+                      {% else %}
+                        <h6 class="mb-0">@{{review.author}}</h6>
+                        <h6 class="card-subtitle mt-2 text-muted">
+                          Posted {{review.date_posted}}
+                        </h6>
+                      {% endif %}
+                    </div>
+                    <!-- Card body-->
+                    <div class="card-body">
+                      <p class="card-text fs-4">{{review.review}}</p>
+                      <!-- Card footer -->
+                      <div class="card-footer bg-transparent px-0 pb-0">
+                        <span>
+                          <button id="likeBtn{{review.id}}" type="button" class="btn btn-link b-0 p-0 text-decoration-none" style="color: green;" onclick="addSentiment({{review.id}}, 'like')">
+                            <small style="color: black">{{review.num_likes}}</small>
+                            {% if review.liked %}
+                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                            {% else %}
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            {% endif %}
+                          </button>
+                        </span>
+                        <span>
+                          <button id="dislikeBtn{{review.id}}" type="button" class="btn btn-link b-0 p-0 text-decoration-none" style="color: red;" onclick="addSentiment({{review.id}}, 'dislike')">
+                            {% if review.disliked %}
+                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                            {% else %}
+                            <i class="bi bi-hand-thumbs-down"></i>
+                            {% endif %}
+                            <small style="color: black">{{review.num_dislikes}}</small>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+    </section>
+  {% endif %}
+{% endblock %}

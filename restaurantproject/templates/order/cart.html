@@ -1,0 +1,116 @@
+{% extends 'index.html' %}
+
+{% block content %} 
+
+    {% if order_items|length > 0 %}
+        <div class="mt-3 container bg-light">
+            <div class="row">
+                <div class="col p-0 table-responsive">
+                    <table class="table table-borderless text-center mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Order# {{order_id}}</th>
+                                <th scope="col">Item</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Date Added</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <div>
+                                            <img src="{{item.image}}" alt="" style="width:5vw; height:5vh;">
+                                        </div>
+                                    </td>
+                                    <td>{{item.name}}</td>
+                                    <td>
+                                        <input type="number" id='quantity{{item.id}}' class="form-control" oninput="updateCart({{item.id}}, {{order_id}})" value={{item.quantity}} min=1 max={{item.max_quantity}}>
+                                    </td>
+                                    <td><label id='totalPrice{{item.id}}'>{{item.total_price}}</label></td>
+                                    {% comment %} <td><label id='price{{item.id}}'>{{item.price}}</label></td> {% endcomment %}
+                                    <td>{{item.date_added}}</td>
+                                    <td>
+                                        <form action="{% url 'order:view_cart'%}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" name="remove" value={{item.id}} class="btn btn-danger">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex">
+                        <div class="">
+                            <h3>Total Cost: <strong class="h2 text-success">&#2547;<span id='totalCost'>{{total_cost}}</span>.00</strong></h3>
+                        </div>
+                        <div class="ms-auto">
+                            <form action="{% url 'order:checkout'%}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" name="checkout" class="btn btn-success"><i class="bi bi-chevron-right"></i> Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-center">You currently dont have any items in your cart.</h1>
+    {% endif %}
+
+    {% comment %} <h1>This is the cart</h1>
+
+    <div id="items">
+            {% if order_items %}
+                <table style="width:100%;">
+                    <tr> 
+                        <th><strong>Item</th>
+                        <th><strong>Quantity</strong></th>
+                        <th><strong>Price</strong></th>
+                        <th><strong>Date Added</strong></th>
+                        <th></th>
+                    </tr>
+
+                    {% for item in order_items %}
+                        <tr>
+                            <td>
+                                <span>
+                                    <img src="{{item.image}}" alt="" style="width:5vw; height:5vh;">
+                                    {{item.name}}
+                                </span>
+                            <td>
+                                <input type="number" id='quantity{{item.id}}' onkeyup="updateCart({{item.id}}, {{order_id}})" oninput="updateCart({{item.id}},{{order_id}})" value={{item.quantity}} min=1 max={{item.max_quantity}}>
+                            </td>
+                            <td><label id='price{{item.id}}'>{{item.price}}</label></td>
+                            <td>{{item.date_added}}</td>
+                            <td>
+                                <form action="{% url 'order:view_cart'%}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" value={{item.id}} name="remove">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <h2 id="totalPrice">Total Price: &#2547;{{total_price}}</h2>
+            {% endif %}
+
+        <style>
+            table, th, td {
+                border:1px solid black;
+            }
+            table{
+                text-align:center;
+            }
+        </style>
+    </div> {% endcomment %}
+{% endblock %}

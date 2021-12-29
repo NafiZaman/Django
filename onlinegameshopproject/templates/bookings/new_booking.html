@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h3>You are about to place an order</h3>
+
+    {% if form %}
+        <section class="p-5">
+            <form action="{% url 'bookings:new_booking' form.stock_id %}" method="post">
+                {% csrf_token %}
+                <img src={{form.box_art}} class="rounded mx-auto d-block" alt={{form.product_name}} style="width:20vw; height:50vh;">
+                <div class="d-flex align-items-center flex-column bd-highlight mb-3">
+                    <p><strong>Product:</strong> {{form.product_name}}</p>
+                    <p><strong>Shop:</strong> {{form.shop_name}}</p>
+                    <p><strong>Price (TK):</strong> {{form.price}}</p>
+                    {{form|crispy}}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </section>
+    {% endif %}
+{% endblock %}

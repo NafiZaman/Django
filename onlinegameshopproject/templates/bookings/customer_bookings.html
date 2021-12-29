@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="p-3">{{username}}'s bookings</h1>
+
+    <section class="p-5">
+        <div class="table-responsive">
+            <table class="table align-middle table-light table-striped table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Shop</th>
+                        <th>Platform</th>
+                        <th>Price</th>
+                        <th>Booking Date</th>
+                        <th>Ready For Pickup?</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{booking.product_name}}</td>
+                            <td>{{booking.shop}}</td>
+                            <td>{{booking.platform}}</td>
+                            <td>{{booking.price}}</td>
+                            <td>{{booking.booking_date}}</td>
+                            <td>
+                                {% if booking.is_arrived %}
+                                    <i class="bi bi-check-circle-fill" style="color:green;"></i>
+                                    <td></td>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill" style="color:red;"></i>
+                                    <td>
+                                        {% comment %} <form action="" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" name="booking" class="btn btn-danger" value={{booking.id}}>Cancel</button>
+                                        </form> {% endcomment %}
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{booking.id}}">Cancel Booking</button>
+                                    </td>
+                                    <!-- Modal Start -->
+                                    <div class="modal fade" id="exampleModal{{booking.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Cancel Booking</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="lead">Are you sure you want to cancel this booking?</p>
+                                                    <p><strong>Product: </strong>{{booking.product_name}}</p>
+                                                    <p><strong>Shop: </strong>{{booking.shop}}</p>
+                                                    <p><strong>Platform: </strong>{{booking.platform}}</p>
+                                                    <p><strong>Price: </strong>{{booking.price}}</p>
+                                                    <p><strong>Booking date: </strong>{{booking.booking_date}}</p>
+                                                    {% comment %} <div class="d-grid gap-2">
+                                                        <a class="btn btn-secondary" href="{% url 'users:register' 'shop'%}" role="button">Shop</a>
+                                                        <a class="btn btn-secondary" href="{% url 'users:register' 'customer'%}" role="button">Customer</a>
+                                                    </div> {% endcomment %}
+                                                    <form action="" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="modal-footer">
+                                                            <button type="submit" name="cancel" class="btn btn-primary" value={{booking.id}}>Confirm</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal End -->
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}
